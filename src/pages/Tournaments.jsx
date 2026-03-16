@@ -461,7 +461,7 @@ export default function Tournaments() {
   gameId: thirdWinner?.odeuGameId,
   kills: thirdWinner?.kills || 0
  } : null,
-        }:
+        };
 }
 
       // Update tournament with results

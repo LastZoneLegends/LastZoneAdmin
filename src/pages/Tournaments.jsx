@@ -444,11 +444,24 @@ export default function Tournaments() {
         const thirdWinner = participantResults.find(p => p.odeuId === winners.third);
 
         resultsData = {
-          first: firstWinner ? { odeuId: firstWinner.odeuId, name: firstWinner.odeuName, gameId: firstWinner.odeuGameId } : null,
-          second: secondWinner ? { odeuId: secondWinner.odeuId, name: secondWinner.odeuName, gameId: secondWinner.odeuGameId } : null,
-          third: thirdWinner ? { odeuId: thirdWinner.odeuId, name: thirdWinner.odeuName, gameId: thirdWinner.odeuGameId } : null,
-        };
-      }
+ first: winners.first ? {
+  name: firstWinner?.odeuName,
+  gameId: firstWinner?.odeuGameId,
+  kills: firstWinner?.kills || 0
+ } : null,
+
+ second: winners.second ? {
+  name: secondWinner?.odeuName,
+  gameId: secondWinner?.odeuGameId,
+  kills: secondWinner?.kills || 0
+ } : null,
+
+ third: winners.third ? {
+  name: thirdWinner?.odeuName,
+  gameId: thirdWinner?.odeuGameId,
+  kills: thirdWinner?.kills || 0
+ } : null
+}
 
       // Update tournament with results
       await updateDoc(doc(db, 'tournaments', selectedTournament.id), {

@@ -460,7 +460,8 @@ export default function Tournaments() {
   name: thirdWinner?.odeuName,
   gameId: thirdWinner?.odeuGameId,
   kills: thirdWinner?.kills || 0
- } : null
+ } : null,
+        }:
 }
 
       // Update tournament with results

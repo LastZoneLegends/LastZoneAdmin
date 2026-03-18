@@ -423,17 +423,17 @@ export default function Tournaments() {
         resultsData = {
           first: winners.first ? {
             slotNumber: parseInt(winners.first),
-            teamMembers: firstTeam.map(p => ({ name: p.odeuName, gameId: p.odeuGameId })),
+            teamMembers: firstTeam.map(p => ({name: p.odeuName,gameId: p.odeuGameId,kills: p.kills || 0})),
             prizePerMember: getPrizePerMember(selectedTournament.prize1 || 0, parseInt(winners.first))
           } : null,
           second: winners.second ? {
             slotNumber: parseInt(winners.second),
-            teamMembers: secondTeam.map(p => ({ name: p.odeuName, gameId: p.odeuGameId })),
+            teamMembers: secondTeam.map(p => ({name: p.odeuName,gameId: p.odeuGameId,kills: p.kills || 0})),
             prizePerMember: getPrizePerMember(selectedTournament.prize2 || 0, parseInt(winners.second))
           } : null,
           third: winners.third ? {
             slotNumber: parseInt(winners.third),
-            teamMembers: thirdTeam.map(p => ({ name: p.odeuName, gameId: p.odeuGameId })),
+            teamMembers: thirdTeam.map(p => ({name: p.odeuName,gameId: p.odeuGameId,kills: p.kills || 0})),
             prizePerMember: getPrizePerMember(selectedTournament.prize3 || 0, parseInt(winners.third))
           } : null,
         };

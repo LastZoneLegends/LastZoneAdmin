@@ -166,9 +166,23 @@ export default function Users() {
   };
 
   const viewUser = (user) => {
-    setSelectedUser(user);
-    setViewModalOpen(true);
-  };
+  setSelectedUser(user);
+
+  if (user?.referralCode) {
+    const referredQuery = query(
+      collection(db, "users"),
+      where("referredBy", "==", user.referralCode)
+    );
+
+    getDocs(referredQuery).then((snapshot) => {
+      setReferredUsersCount(snapshot.size);
+    });
+  } else {
+    setReferredUsersCount(0);
+  }
+
+  setViewModalOpen(true);
+};
 
   const openFundModal = (user) => {
     setSelectedUser(user);
@@ -474,8 +488,8 @@ export default function Users() {
             <div className="pt-4 border-t border-dark-200 space-y-2">
               <p className="text-sm"><span className="text-gray-400">Phone:</span> <span className="text-white">{selectedUser.phone || 'N/A'}</span></p>
               <p className="text-sm"><span className="text-gray-400">Referral Code:</span> <span className="text-white">{selectedUser.referralCode || 'N/A'}</span></p>
-              <p className="text-sm"><span className="text-gray-400">Referred By:</span><span className="text-white">
-{selectedUser.referredBy || "N/A"}</span></p>
+              <p className="text-sm"><span className="text-gray-400">Referred By:</span> <span className="text-white">{selectedUser.referredBy || "N/A"}</span></p>
+              <p className="text-sm"><span className="text-gray-400">Users Referred:</span> <span className="text-white">{referredUsersCount}</span></p>
               <p className="text-sm"><span className="text-gray-400">Joined:</span> <span className="text-white">{formatDate(selectedUser.createdAt)}</span></p>
             </div>
           </div>

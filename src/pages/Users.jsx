@@ -18,6 +18,7 @@ import { formatCurrency, formatDate } from '../utils/formatters';
 export default function Users() {
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
+  const [referredUsersCount, setReferredUsersCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [viewModalOpen, setViewModalOpen] = useState(false);

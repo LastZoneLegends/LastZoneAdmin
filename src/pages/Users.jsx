@@ -19,6 +19,8 @@ export default function Users() {
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [referredUsersCount, setReferredUsersCount] = useState(0);
+  const [referredUsersList, setReferredUsersList] = useState([]);
+  const [referredUsersModalOpen, setReferredUsersModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [viewModalOpen, setViewModalOpen] = useState(false);
@@ -175,8 +177,16 @@ export default function Users() {
     );
 
     getDocs(referredQuery).then((snapshot) => {
-      setReferredUsersCount(snapshot.size);
-    });
+  setReferredUsersCount(snapshot.size);
+
+  const referredList = snapshot.docs.map(doc => ({
+    id: doc.id,
+    ...doc.data()
+  }));
+
+  setReferredUsersList(referredList);
+});
+    
   } else {
     setReferredUsersCount(0);
   }
@@ -489,12 +499,42 @@ export default function Users() {
               <p className="text-sm"><span className="text-gray-400">Phone:</span> <span className="text-white">{selectedUser.phone || 'N/A'}</span></p>
               <p className="text-sm"><span className="text-gray-400">Referral Code:</span> <span className="text-white">{selectedUser.referralCode || 'N/A'}</span></p>
               <p className="text-sm"><span className="text-gray-400">Referred By:</span> <span className="text-white">{selectedUser.referredBy || "N/A"}</span></p>
-              <p className="text-sm"><span className="text-gray-400">Users Referred:</span> <span className="text-white">{referredUsersCount}</span></p>
+              <p className="text-sm"><span className="text-gray-400">Users Referred:</span>
+              <span className="text-primary-400 cursor-pointer hover:underline"onClick={() => setReferredUsersModalOpen(true)}>{referredUsersCount}</span> </p>
               <p className="text-sm"><span className="text-gray-400">Joined:</span> <span className="text-white">{formatDate(selectedUser.createdAt)}</span></p>
             </div>
           </div>
         )}
       </Modal>
+
+   {/* Referred User Modal */}   
+
+      <Modal
+  isOpen={referredUsersModalOpen}
+  onClose={() => setReferredUsersModalOpen(false)}
+  title="Referred Users"
+>
+  {referredUsersList.length === 0 ? (
+    <p className="text-gray-400">No referred users found</p>
+  ) : (
+    <div className="space-y-2">
+      {referredUsersList.map(user => (
+        <div
+          key={user.id}
+          className="p-2 rounded-lg bg-dark-400 flex justify-between"
+        >
+          <span className="text-white">
+            {user.displayName || "No Name"}
+          </span>
+
+          <span className="text-gray-400 text-sm">
+            {user.email || ""}
+          </span>
+        </div>
+      ))}
+    </div>
+  )}
+</Modal>
 
       {/* Fund Management Modal */}
       <Modal isOpen={fundModalOpen} onClose={closeFundModal} title="Manage User Funds">

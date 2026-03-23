@@ -478,6 +478,7 @@ const getTotalEarnings = (participant) => {
             teamMembers: thirdTeam.map(p => ({name: p.odeuName,gameId: p.odeuGameId,kills: p.kills || 0})),
             prizePerMember: getPrizePerMember(selectedTournament.prize3 || 0, parseInt(winners.third))
           } : null,
+          excludedPlayers: excludedPlayers
         };
       } else {
         // Solo mode: store individual player

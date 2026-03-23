@@ -289,6 +289,14 @@ export default function Tournaments() {
         second: tournament.results.second?.slotNumber?.toString() || tournament.results.second?.odeuId || '',
         third: tournament.results.third?.slotNumber?.toString() || tournament.results.third?.odeuId || ''
       });
+
+      // Load excluded players when editing result
+if (isEdit && tournament.results?.excludedPlayers) {
+  setExcludedPlayers(tournament.results.excludedPlayers);
+} else {
+  setExcludedPlayers([]);
+}
+      
     } else {
       setWinners({ first: '', second: '', third: '' });
     }

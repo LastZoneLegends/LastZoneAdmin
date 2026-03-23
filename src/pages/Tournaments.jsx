@@ -1080,15 +1080,15 @@ export default function Tournaments() {
                           </span>
                         </td>
                         <td className="py-2 px-2 text-center">
-                          {winners.first === participant.odeuId && (
-                            <span className="text-xs bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded">🥇 1st</span>
-                          )}
-                          {winners.second === participant.odeuId && (
-                            <span className="text-xs bg-gray-500/20 text-gray-300 px-2 py-1 rounded">🥈 2nd</span>
-                          )}
-                          {winners.third === participant.odeuId && (
-                            <span className="text-xs bg-orange-500/20 text-orange-400 px-2 py-1 rounded">🥉 3rd</span>
-                          )}
+                          {isInWinningSlot(participant, 'first') && (
+  <span className="text-xs bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded">🥇 1st</span>
+)}
+{isInWinningSlot(participant, 'second') && (
+  <span className="text-xs bg-gray-500/20 text-gray-300 px-2 py-1 rounded">🥈 2nd</span>
+)}
+{isInWinningSlot(participant, 'third') && (
+  <span className="text-xs bg-orange-500/20 text-orange-400 px-2 py-1 rounded">🥉 3rd</span>
+)}
                         </td>
                         <td className="py-2 px-2 text-right">
                           <span className="text-green-400 font-bold text-sm">

@@ -107,7 +107,6 @@ export default function Settings() {
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         const data = docSnap.data();
-        setApiKey(docSnap.data().tranzupiApiKey || "");
         setSettings({
           ...settings,
           ...data,
@@ -282,7 +281,7 @@ export default function Settings() {
            <Input
               label="TranzUPI API Key"
               type="text"
-              value={apiKey}
+              value={settings.tranzupiApiKey || ""}
               onChange={(e) =>setSettings({...settings,tranzupiApiKey: e.target.value})}
               placeholder="Enter TranzUPI API key"
            />

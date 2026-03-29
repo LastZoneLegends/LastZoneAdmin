@@ -284,7 +284,6 @@ export default function Settings() {
               type="text"
               value={apiKey}
               onChange={(e) =>setSettings({...settings,tranzupiApiKey: e.target.value})}
-              className="w-full px-4 py-2 rounded-lg bg-dark-400 border border-gray-600 text-white"
               placeholder="Enter TranzUPI API key"
            />
            </div>

@@ -279,11 +279,11 @@ export default function Settings() {
               onChange={(e) => setSettings({ ...settings, referralBonus: e.target.value })}
               placeholder="50"
             />
-           <input
+           <Input
               label="TranzUPI API Key"
               type="text"
               value={apiKey}
-              onChange={(e) => setApiKey(e.target.value)}
+              onChange={(e) =>setSettings({...settings,tranzupiApiKey: e.target.value})}
               className="w-full px-4 py-2 rounded-lg bg-dark-400 border border-gray-600 text-white"
               placeholder="Enter TranzUPI API key"
            />

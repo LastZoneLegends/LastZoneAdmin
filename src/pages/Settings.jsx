@@ -68,6 +68,7 @@ export default function Settings() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState('general');
+  const [apiKey, setApiKey] = useState("");
   const [settings, setSettings] = useState({
     appName: '',
     logoUrl: '',
@@ -106,6 +107,7 @@ export default function Settings() {
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         const data = docSnap.data();
+        setApiKey(docSnap.data().tranzupiApiKey || "");
         setSettings({
           ...settings,
           ...data,
@@ -278,6 +280,21 @@ export default function Settings() {
               placeholder="50"
             />
           </div>
+          <div className="mt-4">
+
+  <label className="block text-sm text-gray-300 mb-2">
+    TranzUPI API Key
+  </label>
+
+  <input
+    type="text"
+    value={apiKey}
+    onChange={(e) => setApiKey(e.target.value)}
+    className="w-full px-4 py-2 rounded-lg bg-dark-400 border border-gray-600 text-white"
+    placeholder="Enter TranzUPI API key"
+  />
+
+</div>
 
           <div className="mt-6 p-4 bg-dark-400 rounded-lg">
             <h3 className="font-medium text-white mb-4">UPI Payment Details</h3>

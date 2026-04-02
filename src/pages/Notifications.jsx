@@ -23,7 +23,8 @@ export default function Notifications() {
     message: '',
     target: 'all',
     tournamentId: '',
-    sendPush: true
+    sendPush: true,
+    redirectUrl: ''
   });
 
   const fcmConfigured = isFcmConfigured();
@@ -220,6 +221,13 @@ export default function Notifications() {
               placeholder="Notification message"
               rows={4}
               required
+            />
+
+            <Input
+              label="Redirect URL (optional)"
+              value={formData.redirectUrl}
+              onChange={(e) =>setFormData({ ...formData, redirectUrl: e.target.value })}
+              placeholder="/wallet or /profile or https://example.com"
             />
 
             <Select

@@ -124,23 +124,23 @@ export const sendPushNotification = async (fcmToken, title, body, data = {}) => 
       fcmOptions: {
         link: data?.url || "/"
       }
+    },
+
+    android: {
+      priority: "high",
+      notification: {
+        sound: "default",
+        channel_id: "default"
+      }
+    },
+
+    apns: {
+      payload: {
+        aps: { sound: "default" }
+      }
     }
   }
 };
-        android: {
-          priority: 'high',
-          notification: {
-            sound: 'default',
-            channel_id: 'default',
-          },
-        },
-        apns: {
-          payload: {
-            aps: { sound: 'default' },
-          },
-        },
-      },
-    };
 
     const response = await fetch(
       `https://fcm.googleapis.com/v1/projects/${FCM_PROJECT_ID}/messages:send`,

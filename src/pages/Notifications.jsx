@@ -83,7 +83,7 @@ export default function Notifications() {
         notificationData.message,
         {
           id: notificationData.id,
-          url: '/notifications'
+          url: notificationData.url || "/"
         }
       );
 

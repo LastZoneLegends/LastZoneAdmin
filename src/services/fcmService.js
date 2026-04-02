@@ -106,12 +106,27 @@ export const sendPushNotification = async (fcmToken, title, body, data = {}) => 
     const accessToken = await getAccessToken();
 
     const message = {
-      message: {
-        token: fcmToken,
-        notification: { title, body },
-        data: Object.fromEntries(
-          Object.entries(data).map(([k, v]) => [k, String(v)])
-        ),
+  message: {
+    token: fcmToken,
+
+    data: {
+      title: String(title),
+      body: String(body),
+      url: String(data?.url || "/")
+    },
+
+    webpush: {
+      notification: {
+        title: title,
+        body: body,
+        icon: "/icons/icon-192x192.png"
+      },
+      fcmOptions: {
+        link: data?.url || "/"
+      }
+    }
+  }
+};
         android: {
           priority: 'high',
           notification: {

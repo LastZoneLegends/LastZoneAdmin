@@ -84,7 +84,7 @@ export default function Notifications() {
         notificationData.message,
         {
           id: notificationData.id,
-          url: notificationData.url || "/"
+          url: notificationData.redirectUrl || "/"
         }
       );
 

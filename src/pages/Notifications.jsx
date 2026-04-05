@@ -109,6 +109,7 @@ export default function Notifications() {
         target: formData.target,
         tournamentId: formData.target === 'tournament' ? formData.tournamentId : null,
         sendPush: formData.sendPush,
+        redirectUrl: formData.redirectUrl || "",
         sentAt: serverTimestamp(),
         createdAt: serverTimestamp()
       };

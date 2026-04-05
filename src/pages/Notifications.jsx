@@ -23,6 +23,7 @@ export default function Notifications() {
     message: '',
     target: 'all',
     tournamentId: '',
+    redirectUrl: '',
     sendPush: true
   });
 
@@ -214,12 +215,19 @@ export default function Notifications() {
             />
 
             <Textarea
-              label="Message"
+             label="Message"
               value={formData.message}
               onChange={(e) => setFormData({ ...formData, message: e.target.value })}
               placeholder="Notification message"
               rows={4}
               required
+            />
+
+            <Input
+             label="Redirect URL (optional)"
+             value={formData.redirectUrl}
+             onChange={(e) => setFormData({ ...formData, redirectUrl: e.target.value })}
+             placeholder="/wallet or /profile or https://youtube.com"
             />
 
             <Select

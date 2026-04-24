@@ -480,6 +480,12 @@ export default function Users() {
               </Card>
             </div>
 
+            <div className="mt-4 bg-green-500/10 border border-green-500/30 rounded-xl px-4 py-3 flex justify-between items-center">
+             <span className="text-sm text-gray-300">Total Deposit</span>
+             <span className="text-lg font-semibold text-green-400">₹{selectedUser?.totalDeposited || 0}
+             </span>
+            </div>
+
             <div className="grid grid-cols-3 gap-4 pt-4 border-t border-dark-200">
               <div className="text-center">
                 <p className="text-2xl font-bold text-white">{selectedUser.matchesPlayed || 0}</p>

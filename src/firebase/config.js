@@ -4,12 +4,12 @@ import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBjVaNDIoUvm0La7OwGqLxmMFQcrNb_Oh4",
-  authDomain: "skillzone-esports.firebaseapp.com",
-  projectId: "skillzone-esports",
-  storageBucket: "skillzone-esports.firebasestorage.app",
-  messagingSenderId: "496866292552",
-  appId: "1:496866292552:web:21054909e1ce530243f97d"
+    apiKey: "AIzaSyCdrH2241iaDDuo33lS7gEswhmwwiEDXWw",
+  authDomain: "last-zone-91af9.firebaseapp.com",
+  projectId: "last-zone-91af9",
+  storageBucket: "last-zone-91af9.firebasestorage.app",
+  messagingSenderId: "58463070590",
+  appId: "1:58463070590:web:4b67aab1defe19cb176b2f"
 };
 
 const app = initializeApp(firebaseConfig);

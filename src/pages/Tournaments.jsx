@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, serverTimestamp, query, orderBy, increment } from 'firebase/firestore';
 import { db } from '../firebase/config';
-import { Plus, Edit2, Trash2, Trophy, Users, Eye, EyeOff, UserCheck, Copy, Check, Award, Target, XCircle } from 'lucide-react';
+import { Plus, Edit2, Trash2, Trophy, Users, Eye, EyeOff, UserCheck, Copy, Check, Award, Target, XCircle, X } from 'lucide-react';
 import Card from '../components/common/Card';
 import Button from '../components/common/Button';
 import Modal from '../components/common/Modal';
@@ -946,6 +946,19 @@ const getTotalEarnings = (participant) => {
                                   <Copy className="w-4 h-4 text-gray-400" />
                                 )}
                               </button>
+
+                              <button
+  onClick={() => {
+    setSelectedPlayer(participant);
+    setShowRemoveModal(true);
+  }}
+  className="p-1.5 bg-red-500/10 hover:bg-red-500/20 rounded transition-colors"
+  title="Remove Player"
+>
+  <X className="w-4 h-4 text-red-400" />
+</button>
+
+                              
                             </div>
                           </div>
                         ))}

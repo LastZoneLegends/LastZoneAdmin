@@ -955,7 +955,7 @@ export default function Tournaments() {
         </button>
 
         <button
-          onClick={() => {
+          onClick={async () => {
             try {
 
   // Tournament ref

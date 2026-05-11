@@ -24,6 +24,7 @@ export default function Tournaments() {
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
   const [selectedTournament, setSelectedTournament] = useState(null);
   const [showRemoveModal, setShowRemoveModal] = useState(false);
+  const [selectedPlayer, setSelectedPlayer] = useState(null);
   const [saving, setSaving] = useState(false);
   const [formData, setFormData] = useState({
     gameId: '',

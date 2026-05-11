@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, serverTimestamp, query, orderBy, increment } from 'firebase/firestore';
 import { db } from '../firebase/config';
-import { Plus, Edit2, Trash2, Trophy, Users, Eye, EyeOff, UserCheck, Copy, Check, Award, Target, XCircle } from 'lucide-react';
+import { Plus, Edit2, Trash2, Trophy, Users, Eye, EyeOff, UserCheck, Copy, Check, Award, Target, XCircle, X } from 'lucide-react';
 import Card from '../components/common/Card';
 import Button from '../components/common/Button';
 import Modal from '../components/common/Modal';
@@ -868,6 +868,17 @@ export default function Tournaments() {
                                   <Copy className="w-4 h-4 text-gray-400" />
                                 )}
                               </button>
+
+                              <button
+  onClick={() => {
+    setSelectedPlayer(participant);
+    setShowRemoveModal(true);
+  }}
+  className="p-1.5 bg-red-500/10 hover:bg-red-500/20 rounded transition-colors"
+  title="Remove Player"
+>
+  <X className="w-4 h-4 text-red-400" />
+</button>
                             </div>
                           </div>
                         ))}
@@ -890,6 +901,67 @@ export default function Tournaments() {
           </div>
         )}
       </Modal>
+
+      {showRemoveModal && selectedPlayer && (
+  <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 p-4">
+
+    <div className="w-full max-w-md bg-dark-500 rounded-xl border border-dark-300 p-5">
+
+      <h2 className="text-xl font-bold text-white mb-4">
+        Remove Participant
+      </h2>
+
+      <div className="p-4 bg-dark-400 rounded-lg mb-4">
+        <p className="text-white font-semibold">
+          {selectedPlayer.odeuName}
+        </p>
+
+        <p className="text-sm text-gray-400">
+          {selectedPlayer.odeuEmail}
+        </p>
+      </div>
+
+      <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-lg mb-4">
+
+        <p className="text-red-400 font-medium">
+          Refund Amount
+        </p>
+
+        <p className="text-2xl font-bold text-white mt-1">
+          ₹{selectedTournament?.entryFee || 0}
+        </p>
+
+        <p className="text-xs text-gray-400 mt-2">
+          Player will be removed from this slot and amount will be refunded to wallet.
+        </p>
+
+      </div>
+
+      <div className="flex items-center justify-end gap-3">
+
+        <button
+          onClick={() => {
+            setShowRemoveModal(false);
+            setSelectedPlayer(null);
+          }}
+          className="px-4 py-2 bg-dark-300 hover:bg-dark-200 text-white rounded-lg"
+        >
+          Cancel
+        </button>
+
+        <button
+          onClick={() => {
+            console.log("Remove Player:", selectedPlayer);
+          }}
+          className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg"
+        >
+          Confirm Remove
+        </button>
+
+      </div>
+    </div>
+  </div>
+)}
 
       {/* Announce/Edit Result Modal */}
       <Modal

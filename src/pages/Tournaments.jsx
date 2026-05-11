@@ -956,7 +956,60 @@ export default function Tournaments() {
 
         <button
           onClick={() => {
-            console.log("Remove Player:", selectedPlayer);
+            try {
+
+  // Tournament ref
+  const tournamentRef = doc(db, "tournaments", selectedTournament.id);
+
+  // User ref
+  const userRef = doc(db, "users", selectedPlayer.odeuUserId);
+
+  // Get user data
+  const userSnap = await getDoc(userRef);
+
+  if (!userSnap.exists()) {
+    alert("User not found");
+    return;
+  }
+
+  const userData = userSnap.data();
+
+  // Refund amount
+  const refundAmount = Number(selectedTournament.entryFee || 0);
+
+  // Update wallet
+  await updateDoc(userRef, {
+    walletBalance: Number(userData.walletBalance || 0) + refundAmount
+  });
+
+  // Remove participant from array
+  const updatedParticipants =
+    selectedTournament.participantDetails.filter(
+      (p) => p.odeuId !== selectedPlayer.odeuId
+    );
+
+  // Update tournament
+  await updateDoc(tournamentRef, {
+    participantDetails: updatedParticipants,
+    participantCount: updatedParticipants.length
+  });
+
+  // Update local UI
+  setSelectedTournament({
+    ...selectedTournament,
+    participantDetails: updatedParticipants,
+    participantCount: updatedParticipants.length
+  });
+
+  alert("Participant removed & money refunded");
+
+  setShowRemoveModal(false);
+  setSelectedPlayer(null);
+
+} catch (error) {
+  console.error(error);
+  alert("Failed to remove participant");
+            }
           }}
           className="px-4 py-2 bg-red-500 hover:bg-red-600 rounded-lg text-white"
         >

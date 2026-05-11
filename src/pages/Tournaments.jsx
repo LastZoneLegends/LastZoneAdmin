@@ -905,67 +905,7 @@ export default function Tournaments() {
       </Modal>
 
       {/* Remove Player Modal */}
-<Modal
-  isOpen={showRemoveModal}
-  onClose={() => {
-    setShowRemoveModal(false);
-    setSelectedPlayer(null);
-  }}
-  title="Remove Participant"
-  size="md"
->
-  {selectedPlayer && (
-    <div className="space-y-4">
-      
-      <div className="p-4 bg-dark-400 rounded-lg">
-        <p className="text-white font-semibold">
-          {selectedPlayer.odeuName}
-        </p>
 
-        <p className="text-sm text-gray-400">
-          {selectedPlayer.odeuEmail}
-        </p>
-      </div>
-
-      <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
-        <p className="text-red-400 font-medium">
-          Refund Amount
-        </p>
-
-        <p className="text-2xl font-bold text-white mt-1">
-          ₹{selectedTournament?.entryFee || 0}
-        </p>
-
-        <p className="text-xs text-gray-400 mt-2">
-          Player will be removed from this slot and amount will be refunded to wallet.
-        </p>
-      </div>
-
-      <div className="flex items-center justify-end gap-3">
-        
-        <button
-          onClick={() => {
-            setShowRemoveModal(false);
-            setSelectedPlayer(null);
-          }}
-          className="px-4 py-2 bg-dark-300 hover:bg-dark-200 text-white rounded-lg"
-        >
-          Cancel
-        </button>
-
-        <button
-          onClick={() => {
-            console.log("Remove Player:", selectedPlayer);
-          }}
-          className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg"
-        >
-          Confirm Remove
-        </button>
-
-      </div>
-    </div>
-  )}
-</Modal>
 
      
       {/* Announce/Edit Result Modal */}

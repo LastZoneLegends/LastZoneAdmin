@@ -879,6 +879,7 @@ export default function Tournaments() {
 >
   <X className="w-4 h-4 text-red-400" />
 </button>
+                              
                             </div>
                           </div>
                         ))}
@@ -902,16 +903,20 @@ export default function Tournaments() {
         )}
       </Modal>
 
-      {showRemoveModal && selectedPlayer && (
-  <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 p-4">
-
-    <div className="w-full max-w-md bg-dark-500 rounded-xl border border-dark-300 p-5">
-
-      <h2 className="text-xl font-bold text-white mb-4">
-        Remove Participant
-      </h2>
-
-      <div className="p-4 bg-dark-400 rounded-lg mb-4">
+      {/* Remove Player Modal */}
+<Modal
+  isOpen={showRemoveModal}
+  onClose={() => {
+    setShowRemoveModal(false);
+    setSelectedPlayer(null);
+  }}
+  title="Remove Participant"
+  size="md"
+>
+  {selectedPlayer && (
+    <div className="space-y-4">
+      
+      <div className="p-4 bg-dark-400 rounded-lg">
         <p className="text-white font-semibold">
           {selectedPlayer.odeuName}
         </p>
@@ -921,8 +926,7 @@ export default function Tournaments() {
         </p>
       </div>
 
-      <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-lg mb-4">
-
+      <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
         <p className="text-red-400 font-medium">
           Refund Amount
         </p>
@@ -934,11 +938,10 @@ export default function Tournaments() {
         <p className="text-xs text-gray-400 mt-2">
           Player will be removed from this slot and amount will be refunded to wallet.
         </p>
-
       </div>
 
       <div className="flex items-center justify-end gap-3">
-
+        
         <button
           onClick={() => {
             setShowRemoveModal(false);
@@ -960,9 +963,10 @@ export default function Tournaments() {
 
       </div>
     </div>
-  </div>
-)}
+  )}
+</Modal>
 
+     
       {/* Announce/Edit Result Modal */}
       <Modal
         isOpen={resultModalOpen}

@@ -1077,9 +1077,30 @@ if (!participantTransaction) {
   return;
 }
 
-  depositedRefund = Number(transactionData.depositedUsed || 0);
-  bonusRefund = Number(transactionData.bonusUsed || 0);
-  winningRefund = Number(transactionData.winningUsed || 0);
+  const totalTransactionAmount =
+  Number(transactionData.amount || 0);
+
+const totalParticipants =
+  Number(transactionData.participants?.length || 1);
+
+const perPlayerAmount =
+  totalTransactionAmount / totalParticipants;
+
+const depositedPerPlayer =
+  Number(transactionData.depositedUsed || 0) /
+  totalParticipants;
+
+const bonusPerPlayer =
+  Number(transactionData.bonusUsed || 0) /
+  totalParticipants;
+
+const winningPerPlayer =
+  Number(transactionData.winningUsed || 0) /
+  totalParticipants;
+
+depositedRefund = depositedPerPlayer;
+bonusRefund = bonusPerPlayer;
+winningRefund = winningPerPlayer;
 }
 
 const newDeposited =

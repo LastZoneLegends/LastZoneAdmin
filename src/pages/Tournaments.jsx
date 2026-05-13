@@ -1054,9 +1054,21 @@ const getTotalEarnings = (participant) => {
   const refundAmount = Number(selectedTournament.entryFee || 0);
 
   // Update wallet
-  await updateDoc(userRef, {
-    walletBalance: Number(userData.walletBalance || 0) + refundAmount
-  });
+await updateDoc(userRef, {
+  walletBalance: Number(userData.walletBalance || 0) + refundAmount,
+  depositedBalance: Number(userData.depositedBalance || 0) + refundAmount
+});
+
+// Create refund transaction
+await addDoc(collection(db, "transactions"), {
+  userId: selectedPlayer.odeuUserId,
+  type: "refund",
+  title: "Tournament Refund",
+  amount: refundAmount,
+  status: "completed",
+  createdAt: serverTimestamp(),
+  description: `Refund for leaving ${selectedTournament?.name}`
+});
 
   // Remove participant from array
   const updatedParticipants =

@@ -1068,6 +1068,14 @@ let winningRefund = 0;
 
 if (!transactionSnap.empty) {
   const transactionData = transactionSnap.docs[0].data();
+  const participantTransaction = transactionData.participants?.find(
+  (p) => p.odeuId === selectedPlayer.odeuId
+);
+
+if (!participantTransaction) {
+  alert("Participant transaction not found");
+  return;
+}
 
   depositedRefund = Number(transactionData.depositedUsed || 0);
   bonusRefund = Number(transactionData.bonusUsed || 0);

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, getDoc, serverTimestamp, query, orderBy, increment } from 'firebase/firestore';
+import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, getDoc, serverTimestamp, query, where, orderBy, increment } from 'firebase/firestore';
 import { db } from '../firebase/config';
 import { Plus, Edit2, Trash2, Trophy, Users, Eye, EyeOff, UserCheck, Copy, Check, Award, Target, XCircle, X } from 'lucide-react';
 import Card from '../components/common/Card';
@@ -1053,10 +1053,41 @@ const getTotalEarnings = (participant) => {
   // Refund amount
   const refundAmount = Number(selectedTournament.entryFee || 0);
 
-  // Update wallet
+  const transactionQuery = query(
+  collection(db, "transactions"),
+  where("userId", "==", selectedPlayer.odeuUserId),
+  where("tournamentId", "==", selectedTournament.id),
+  where("type", "==", "entry_fee")
+);
+
+const transactionSnap = await getDocs(transactionQuery);
+
+let depositedRefund = 0;
+let bonusRefund = 0;
+let winningRefund = 0;
+
+if (!transactionSnap.empty) {
+  const transactionData = transactionSnap.docs[0].data();
+
+  depositedRefund = Number(transactionData.depositedUsed || 0);
+  bonusRefund = Number(transactionData.bonusUsed || 0);
+  winningRefund = Number(transactionData.winningUsed || 0);
+}
+
+const newDeposited =
+  Number(userData.depositedBalance || 0) + depositedRefund;
+
+const newBonus =
+  Number(userData.bonusBalance || 0) + bonusRefund;
+
+const newWinning =
+  Number(userData.winningBalance || 0) + winningRefund;
+
 await updateDoc(userRef, {
-  walletBalance: Number(userData.walletBalance || 0) + refundAmount,
-  depositedBalance: Number(userData.depositedBalance || 0) + refundAmount
+  depositedBalance: newDeposited,
+  bonusBalance: newBonus,
+  winningBalance: newWinning,
+  walletBalance: newDeposited + newBonus + newWinning
 });
 
 // Create refund transaction

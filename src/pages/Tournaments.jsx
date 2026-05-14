@@ -459,7 +459,9 @@ const getTotalEarnings = (participant) => {
           await updateDoc(doc(db, 'users', participant.odeuUserId), {
             walletBalance: increment(Math.round(difference)),
             winningBalance: increment(Math.round(difference)),
-            totalWinnings: increment(difference > 0 ? Math.round(difference) : 0) // Only add positive to total
+            // Only add positive to total
+            totalWinnings: increment(difference > 0 ? Math.round(difference) : 0) 
+            lastMatchAt: serverTimestamp()
           });
 
           // Create transaction record

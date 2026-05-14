@@ -1075,9 +1075,13 @@ if (!transactionSnap.empty) {
 );
 
 if (!participantTransaction) {
-  alert("Participant transaction not found");
-  return;
-}
+  console.log("Old transaction format detected");
+
+  depositedRefund = Number(transactionData.depositedUsed || 0);
+  bonusRefund = Number(transactionData.bonusUsed || 0);
+  winningRefund = Number(transactionData.winningUsed || 0);
+
+} else {
 
   const totalTransactionAmount =
   Number(transactionData.amount || 0);

@@ -460,7 +460,7 @@ const getTotalEarnings = (participant) => {
             walletBalance: increment(Math.round(difference)),
             winningBalance: increment(Math.round(difference)),
             // Only add positive to total
-            totalWinnings: increment(difference > 0 ? Math.round(difference) : 0) 
+            totalWinnings: increment(difference > 0 ? Math.round(difference) : 0),
             lastMatchAt: serverTimestamp()
           });
 

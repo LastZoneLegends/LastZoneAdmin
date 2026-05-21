@@ -1034,134 +1034,318 @@ const getTotalEarnings = (participant) => {
 
         <button
           onClick={async () => {
-             try {
+  try {
 
-  // Tournament ref
-  const tournamentRef = doc(db, "tournaments", selectedTournament.id);
-
-  // User ref
-  const userRef = doc(db, "users", selectedPlayer.odeuUserId);
-
-  // Get user data
-  const userSnap = await getDoc(userRef);
-
-  if (!userSnap.exists()) {
-    alert("User not found");
-    return;
-  }
-
-  const userData = userSnap.data();
-
-  // Refund amount
-  const refundAmount = Number(selectedTournament.entryFee || 0);
-
-  const transactionQuery = query(
-  collection(db, "transactions"),
-  where("userId", "==", selectedPlayer.odeuUserId),
-  where("tournamentId", "==", selectedTournament.id),
-  where("type", "==", "entry_fee")
-);
-
-const transactionSnap = await getDocs(transactionQuery);
-
-let depositedRefund = 0;
-let bonusRefund = 0;
-let winningRefund = 0;
-
-if (!transactionSnap.empty) {
-  const transactionData = transactionSnap.docs[0].data();
-  const participantTransaction = transactionData.participants?.find(
-  (p) => p.odeuId === selectedPlayer.odeuId
-);
-
-if (!participantTransaction) {
-  console.log("Old transaction format detected");
-
-  depositedRefund = Number(transactionData.depositedUsed || 0);
-  bonusRefund = Number(transactionData.bonusUsed || 0);
-  winningRefund = Number(transactionData.winningUsed || 0);
-
-} else {
-
-  const totalTransactionAmount =
-    Number(transactionData.amount || 0);
-
-  const totalParticipants =
-    Number(transactionData.participants?.length || 1);
-
-  const depositedPerPlayer =
-    Number(transactionData.depositedUsed || 0) /
-    totalParticipants;
-
-  const bonusPerPlayer =
-    Number(transactionData.bonusUsed || 0) /
-    totalParticipants;
-
-  const winningPerPlayer =
-    Number(transactionData.winningUsed || 0) /
-    totalParticipants;
-
-  depositedRefund = depositedPerPlayer;
-  bonusRefund = bonusPerPlayer;
-  winningRefund = winningPerPlayer;
-}
-
-const newDeposited =
-  Number(userData.depositedBalance || 0) + depositedRefund;
-
-const newBonus =
-  Number(userData.bonusBalance || 0) + bonusRefund;
-
-const newWinning =
-  Number(userData.winningBalance || 0) + winningRefund;
-
-await updateDoc(userRef, {
-  depositedBalance: newDeposited,
-  bonusBalance: newBonus,
-  winningBalance: newWinning,
-  walletBalance: newDeposited + newBonus + newWinning
-});
-
-// Create refund transaction
-await addDoc(collection(db, "transactions"), {
-  userId: selectedPlayer.odeuUserId,
-  type: "refund",
-  title: "Tournament Refund",
-  amount: refundAmount,
-  status: "completed",
-  createdAt: serverTimestamp(),
-  description: `Refund for leaving ${selectedTournament?.name}`
-});
-
-  // Remove participant from array
-  const updatedParticipants =
-    selectedTournament.participantDetails.filter(
-      (p) => p.odeuId !== selectedPlayer.odeuId
+    // Tournament ref
+    const tournamentRef = doc(
+      db,
+      "tournaments",
+      selectedTournament.id
     );
 
-  // Update tournament
-  await updateDoc(tournamentRef, {
-    participantDetails: updatedParticipants,
-    participantCount: updatedParticipants.length
-  });
+    // User ref
+    const userRef = doc(
+      db,
+      "users",
+      selectedPlayer.odeuUserId
+    );
 
-  // Update local UI
-  setSelectedTournament({
-    ...selectedTournament,
-    participantDetails: updatedParticipants,
-    participantCount: updatedParticipants.length
-  });
+    // Get latest tournament data
+    const latestTournamentSnap = await getDoc(
+      tournamentRef
+    );
 
-  alert("Participant removed & money refunded");
+    if (!latestTournamentSnap.exists()) {
+      alert("Tournament not found");
+      return;
+    }
 
-  setShowRemoveModal(false);
-  setSelectedPlayer(null);
+    const latestTournament =
+      latestTournamentSnap.data();
 
-} catch (error) {
-  console.error(error);
-  alert("Failed to remove participant");
-}
-          }}
+    // Check participant exists
+    const participantExists =
+      latestTournament.participantDetails?.some(
+        (p) =>
+          p.odeuId === selectedPlayer.odeuId &&
+          p.slotNumber === selectedPlayer.slotNumber &&
+          p.position === selectedPlayer.position
+      );
+
+    if (!participantExists) {
+      alert("Player already removed");
+      return;
+    }
+
+    // Get user data
+    const userSnap = await getDoc(userRef);
+
+    if (!userSnap.exists()) {
+      alert("User not found");
+      return;
+    }
+
+    const userData = userSnap.data();
+
+    // Prevent duplicate refund
+    const existingRefundQuery = query(
+      collection(db, "transactions"),
+      where(
+        "userId",
+        "==",
+        selectedPlayer.odeuUserId
+      ),
+      where(
+        "tournamentId",
+        "==",
+        selectedTournament.id
+      ),
+      where("type", "==", "refund"),
+      where(
+        "slotNumber",
+        "==",
+        selectedPlayer.slotNumber
+      ),
+      where(
+        "position",
+        "==",
+        selectedPlayer.position
+      )
+    );
+
+    const existingRefundSnap =
+      await getDocs(existingRefundQuery);
+
+    if (!existingRefundSnap.empty) {
+      alert("Refund already processed");
+      return;
+    }
+
+    // Find entry transaction
+    const transactionQuery = query(
+      collection(db, "transactions"),
+      where(
+        "userId",
+        "==",
+        selectedPlayer.odeuUserId
+      ),
+      where(
+        "tournamentId",
+        "==",
+        selectedTournament.id
+      ),
+      where("type", "==", "entry_fee")
+    );
+
+    const transactionSnap =
+      await getDocs(transactionQuery);
+
+    // Default refund values
+    let depositedRefund = 0;
+    let bonusRefund = 0;
+    let winningRefund = 0;
+
+    const entryFee =
+      Number(selectedTournament.entryFee || 0);
+
+    // Transaction found
+    if (!transactionSnap.empty) {
+
+      const transactionData =
+        transactionSnap.docs[0].data();
+
+      // NEW FORMAT SUPPORT
+      const participantTransaction =
+        transactionData.participants?.find(
+          (p) =>
+            p.odeuId === selectedPlayer.odeuId &&
+            p.slotNumber ===
+              selectedPlayer.slotNumber &&
+            p.position ===
+              selectedPlayer.position
+        );
+
+      // If payment breakdown exists
+      if (
+        participantTransaction?.paymentBreakdown
+      ) {
+
+        depositedRefund = Number(
+          participantTransaction
+            .paymentBreakdown.deposit || 0
+        );
+
+        bonusRefund = Number(
+          participantTransaction
+            .paymentBreakdown.bonus || 0
+        );
+
+        winningRefund = Number(
+          participantTransaction
+            .paymentBreakdown.winning || 0
+        );
+
+      } else {
+
+        // OLD FORMAT SUPPORT
+
+        const totalParticipants =
+          Number(
+            transactionData.participants?.length ||
+            1
+          );
+
+        depositedRefund =
+          Number(
+            transactionData.depositedUsed || 0
+          ) / totalParticipants;
+
+        bonusRefund =
+          Number(
+            transactionData.bonusUsed || 0
+          ) / totalParticipants;
+
+        winningRefund =
+          Number(
+            transactionData.winningUsed || 0
+          ) / totalParticipants;
+      }
+
+    } else {
+
+      // FALLBACK REFUND
+      // No transaction found
+
+      depositedRefund = entryFee;
+
+      bonusRefund = 0;
+
+      winningRefund = 0;
+    }
+
+    // Total refund amount
+    const refundAmount =
+      depositedRefund +
+      bonusRefund +
+      winningRefund;
+
+    // Updated balances
+    const newDeposited =
+      Number(userData.depositedBalance || 0) +
+      depositedRefund;
+
+    const newBonus =
+      Number(userData.bonusBalance || 0) +
+      bonusRefund;
+
+    const newWinning =
+      Number(userData.winningBalance || 0) +
+      winningRefund;
+
+    // Update wallet
+    await updateDoc(userRef, {
+      depositedBalance: newDeposited,
+      bonusBalance: newBonus,
+      winningBalance: newWinning,
+      walletBalance:
+        newDeposited +
+        newBonus +
+        newWinning,
+    });
+
+    // Create refund transaction
+    await addDoc(
+      collection(db, "transactions"),
+      {
+        userId: selectedPlayer.odeuUserId,
+
+        type: "refund",
+
+        refundType: "slot_remove",
+
+        title: "Tournament Refund",
+
+        amount: refundAmount,
+
+        depositedRefund,
+
+        bonusRefund,
+
+        winningRefund,
+
+        slotNumber:
+          selectedPlayer.slotNumber,
+
+        position:
+          selectedPlayer.position,
+
+        tournamentId:
+          selectedTournament.id,
+
+        tournamentName:
+          selectedTournament.name,
+
+        status: "completed",
+
+        description:
+          `Refund for removing slot ${selectedPlayer.slotNumber} position ${selectedPlayer.position}`,
+
+        createdAt: serverTimestamp(),
+      }
+    );
+
+    // Remove ONLY selected slot+position
+    const updatedParticipants =
+      latestTournament.participantDetails.filter(
+        (p) =>
+          !(
+            p.odeuId ===
+              selectedPlayer.odeuId &&
+            p.slotNumber ===
+              selectedPlayer.slotNumber &&
+            p.position ===
+              selectedPlayer.position
+          )
+      );
+
+    // Update tournament
+    await updateDoc(tournamentRef, {
+      participantDetails:
+        updatedParticipants,
+
+      participantCount:
+        updatedParticipants.length,
+    });
+
+    // Update local UI
+    setSelectedTournament({
+      ...selectedTournament,
+      participantDetails:
+        updatedParticipants,
+      participantCount:
+        updatedParticipants.length,
+    });
+
+    alert(
+      `Player removed successfully.\nRefunded ₹${refundAmount}`
+    );
+
+    setShowRemoveModal(false);
+
+    setSelectedPlayer(null);
+
+  } catch (error) {
+
+    console.error(error);
+
+    alert(
+      error?.message ||
+      "Failed to remove participant"
+    );
+  }
+}}
+
+  
           className="px-4 py-2 bg-red-500 hover:bg-red-600 rounded-lg text-white"
         >
           Confirm Remove

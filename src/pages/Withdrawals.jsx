@@ -104,6 +104,7 @@ export default function Withdrawals() {
       await updateDoc(doc(db, 'withdrawals', selectedWithdrawal.id), {
         status: 'rejected',
         rejectReason: rejectReason,
+        refundGiven: refundMoney,
         rejectedAt: serverTimestamp(),
         updatedAt: serverTimestamp()
       });
@@ -135,18 +136,20 @@ export default function Withdrawals() {
         });
       });
 
-      // Create a new refund transaction to show in history
-      await addDoc(collection(db, 'transactions'), {
-        userId: selectedWithdrawal.userId,
-        userName: selectedWithdrawal.userName,
-        userEmail: selectedWithdrawal.userEmail,
-        type: 'refund',
-        amount: selectedWithdrawal.amount,
-        description: `Withdrawal Refund - ${rejectReason}`,
-        status: 'completed',
-        referenceId: selectedWithdrawal.id,
-        createdAt: serverTimestamp()
-      });
+      if (refundMoney) {
+  // Create refund transaction
+  await addDoc(collection(db, 'transactions'), {
+    userId: selectedWithdrawal.userId,
+    userName: selectedWithdrawal.userName,
+    userEmail: selectedWithdrawal.userEmail,
+    type: 'refund',
+    amount: selectedWithdrawal.amount,
+    description: `Withdrawal Refund - ${rejectReason}`,
+    status: 'completed',
+    referenceId: selectedWithdrawal.id,
+    createdAt: serverTimestamp()
+  });
+      }
 
       await fetchWithdrawals();
       setRejectModalOpen(false);

@@ -21,6 +21,7 @@ export default function Withdrawals() {
   const [selectedWithdrawal, setSelectedWithdrawal] = useState(null);
   const [processing, setProcessing] = useState(false);
   const [rejectReason, setRejectReason] = useState('');
+  const [refundMoney, setRefundMoney] = useState(true);
 
   useEffect(() => {
     fetchWithdrawals();
@@ -90,6 +91,7 @@ export default function Withdrawals() {
   const openRejectModal = (withdrawal) => {
     setSelectedWithdrawal(withdrawal);
     setRejectReason('');
+    setRefundMoney(true); // Default ON
     setRejectModalOpen(true);
   };
 
@@ -106,13 +108,16 @@ export default function Withdrawals() {
         updatedAt: serverTimestamp()
       });
 
-      // Return money to user's wallet (money was deducted when request was created)
-      const userRef = doc(db, 'users', selectedWithdrawal.userId);
-      await updateDoc(userRef, {
-        walletBalance: increment(selectedWithdrawal.amount),
-        winningBalance: increment(selectedWithdrawal.amount),
-        updatedAt: serverTimestamp()
-      });
+      if (refundMoney) {
+  // Return money to user's wallet
+  const userRef = doc(db, 'users', selectedWithdrawal.userId);
+
+  await updateDoc(userRef, {
+    walletBalance: increment(selectedWithdrawal.amount),
+    winningBalance: increment(selectedWithdrawal.amount),
+    updatedAt: serverTimestamp()
+  });
+      }
 
       // Update the existing pending transaction to rejected
       const transactionsSnap = await getDocs(
@@ -294,6 +299,25 @@ export default function Withdrawals() {
             placeholder="Enter reason for rejection..."
             required
           />
+          <div className="mt-4 p-3 bg-dark-400 rounded-lg">
+  <label className="flex items-center justify-between cursor-pointer">
+    <div>
+      <p className="text-white font-medium">
+        Refund Money
+      </p>
+      <p className="text-xs text-gray-400">
+        Return withdrawn amount back to user's wallet.
+      </p>
+    </div>
+
+    <input
+      type="checkbox"
+      checked={refundMoney}
+      onChange={(e) => setRefundMoney(e.target.checked)}
+      className="w-5 h-5 accent-green-500"
+    />
+  </label>
+</div>
           <div className="flex gap-3 mt-4">
             <Button variant="secondary" onClick={() => setRejectModalOpen(false)} className="flex-1">
               Cancel
